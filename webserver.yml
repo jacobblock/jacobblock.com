@@ -1,0 +1,13 @@
+---
+- include: nginx.yml
+- hosts: web-servers
+  users: dev
+  sudo: true
+  gather_facts: false
+  
+  vars:
+    user: "dev"
+    home: /home$user
+    
+  tasks:
+    - name: link 
