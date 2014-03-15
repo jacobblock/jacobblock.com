@@ -9,75 +9,75 @@
   user: vagrant
   sudo: yes
   tasks:
-    - name: update apt cache
-      apt: update_cache=yes
+#    - name: update apt cache
+#      yum: update_cache=yes
     - name: Install packages
       yum: pkg={{item}} state=latest
       with_items:
         - httpd
-        - unzip
-        - apache
-        - httpd
+#        - unzip
         - mysql-server
-        - python-mysqldb
-        - php5
-        - php5-cli
-        - php5-mysql
-        - php5-curl
-        - php5-gd
-        - php5-sqlite
-        - php5-xmlrpc
-        - php5-imagick
-        - php5-xcache
-        - php5-mysql
-        - libapache2-mod-php5
+        - php
+        - php-mysql
+        - php-cli
+        - php-gd
+#        - python-mysqldb
+#        - php5-curl
+#        - php5-sqlite
+#        - php5-xmlrpc
+#        - php5-imagick
+#        - php5-xcache
+#        - libapache2-mod-php5
     - name: Start httpd
       service: name=httpd state=started
-    - name: Activate mods
-      command: a2enmod {{item}}
-      with_items:
-        - mod_rewrite
-    - name: Start MySQL
-      service: name=mysql state=started
-    - name: Setup MySQL root
-      mysql_user: name=root password=vagrant host=$item state=present
-      with_items:
-        - $ansible_hostname
-        - 127.0.1.1
-        - ::1
-        - localhost
-    - name: Setup root creds
-      template: src={{ mysqlTemplatePath }} dest=/root/.my.cnf owner=root mode=0600
-    - name: Delete blank MySQL users
-      mysql_user: name="" host={{item} state=absent
-      with_items:
-       - $ansible_hostname
-       - 127.0.1.1
-       - ::1
-       - localhost
-    - name: Drop MySQL test db
-      mysql_db: name=test state=absent
-    - name: Setup WordPress db
-      mysql_db: name=wordpress encoding=utf8 collation=utf8_general_ci state=present login_user=root login_password=vagrant
-    - name: Setup WordPress user
-      mysql_user: name=user_wp password=vagrant host=localhost priv=wordpress.*:ALL state=present
-    - name: Put vagrant into www-data group
-      user: name=vagrant gorups=www-data append=yes
-    - name: Make directory
-      file: path=/var/www/wordpress state=directory owner=www-data group=www-data mode=0755
-    - name: Download WordPRess
-      get_url: url=http://wordpress.org/latest.zip dest=/tmp/
-    - name: Unzip WordPress
-      command: unzip /tmp/latest.zip -d /tmp/
-    - name: set WordPress file permissions
-      file: path=/tmp/wordpress state=directory recurse=yes owner=www-data group=www-data mode=0775
-    - name: Move wordpress
-      command: mv /tmp/wordpress /var/www/
-    - name: copy virtual host setup
-      template: src={{vhostTemplatePath}} dest=/etc/apache2/sites-available/
-    - name: Activate virtual host
-      command: a2ensite vhost
-    - name: deactivate default vhost
-      command: a2dissite default
-    - name: ensure apache is running
-      service: name=apache2 state=restarted
+    - name: Start mysqld
+      service: name=mysqld state=started
+# sudo chkconfig httpd on; sudo chkconfig mysqld on      
+#    - name: Activate mods
+#      command: a2enmod {{item}}
+#      with_items:
+#        - mod_rewrite
+#    - name: Start MySQL
+#      service: name=mysql state=started
+#    - name: Setup MySQL root
+#      mysql_user: name=root password=vagrant host=$item state=present
+#      with_items:
+#        - $ansible_hostname
+#        - 127.0.1.1
+#        - ::1
+#        - localhost
+#    - name: Setup root creds
+#      template: src={{ mysqlTemplatePath }} dest=/root/.my.cnf owner=root mode=0600
+#    - name: Delete blank MySQL users
+#      mysql_user: name="" host={{item} state=absent
+#      with_items:
+#       - $ansible_hostname
+#       - 127.0.1.1
+#       - ::1
+#       - localhost
+#    - name: Drop MySQL test db
+#      mysql_db: name=test state=absent
+#    - name: Setup WordPress db
+#      mysql_db: name=wordpress encoding=utf8 collation=utf8_general_ci state=present login_user=root login_password=vagrant
+#    - name: Setup WordPress user
+#      mysql_user: name=user_wp password=vagrant host=localhost priv=wordpress.*:ALL state=present
+#    - name: Put vagrant into www-data group
+#      user: name=vagrant gorups=www-data append=yes
+#    - name: Make directory
+#      file: path=/var/www/wordpress state=directory owner=www-data group=www-data mode=0755
+#    - name: Download WordPRess
+#      get_url: url=http://wordpress.org/latest.zip dest=/tmp/
+#    - name: Unzip WordPress
+#      command: unzip /tmp/latest.zip -d /tmp/
+#    - name: set WordPress file permissions
+#      file: path=/tmp/wordpress state=directory recurse=yes owner=www-data group=www-data mode=0775
+#    - name: Move wordpress
+#      command: mv /tmp/wordpress /var/www/
+#    - name: copy virtual host setup
+#      template: src={{vhostTemplatePath}} dest=/etc/apache2/sites-available/
+#    - name: Activate virtual host
+#      command: a2ensite vhost
+#    - name: deactivate default vhost
+#      command: a2dissite default
+#    - name: ensure apache is running
+#      service: name=apache2 state=restarted
