@@ -8,12 +8,15 @@
 - hosts: all
   user: vagrant
   sudo: yes
+  
   vars:
     vhostTemplatePath: templates/vhost
     mysqlTemplatePath: templates/mysql
+    
   tasks:
 #    - name: update apt cache
 #      yum: update_cache=yes
+
     - name: Install packages
       yum: pkg={{item}} state=latest
       with_items:
@@ -39,10 +42,7 @@
     - name: Startup auto
       command: chkconfig httpd on
       command: chkconfig mysqld on
-#    - name: Activate mods
-#      command: a2enmod {{item}}
-#      with_items:
-#        - mod_rewrite
+
 #    - name: Setup MySQL root
 #      mysql_user: name=root password=vagrant host={{item}} state=present
 #      with_items:
@@ -50,10 +50,12 @@
 #        - 127.0.0.1
 #        - ::1
 #        - localhost
-#    - name: Setup root creds
-#      template: src={{ mysqlTemplatePath }} dest=/root/.my.cnf owner=root mode=0600
+#    - name: Mysql configuration
+#      template: src={{ mysqlTemplatePath }} dest=/etc/my.cnf
+#      notify:
+#      - restart mysqld
 #    - name: Delete blank MySQL users
-#      mysql_user: name="" host={{item} state=absent
+#      mysql_user: name="" host={{item}} state=absent
 #      with_items:
 #       - "{{ansible_hostname}}"
 #       - 127.0.1.1
@@ -69,16 +71,22 @@
 #      user: name=vagrant gorups=www-data append=yes
 #    - name: Make directory
 #      file: path=/var/www/wordpress state=directory owner=www-data group=www-data mode=0755
-    - name: Download WordPRess
-      get_url: url=http://wordpress.org/latest.zip dest=/tmp/
-#    - name: Unzip WordPress
-#      command: unzip /tmp/latest.zip -d /tmp/
-#    - name: set WordPress file permissions
-#      file: path=/tmp/wordpress state=directory recurse=yes owner=www-data group=www-data mode=0775
-#    - name: Move wordpress
-#      command: mv /tmp/wordpress /var/www/html
-#    - name: copy virtual host setup
-#      template: src={{vhostTemplatePath}} dest=/etc/apache2/sites-available/
+
+    - name: Download WordPress
+      get_url: url=http://wordpress.org/latest.zip dest=/tmp/latest.zip
+    - name: Unzip WordPress
+      unarchive: copy=no src=/tmp/latest.zip dest=/tmp/
+    - name: Move wordpress
+      command: rsync -a /tmp/wordpress /var/www/html
+      command: rm -rf /tmp/latest.zip /tmp/wordpress
+#      command: mv -f /tmp/wordpress /var/www/html
+
+    - name: Setup virtual hosts
+      command: mkdir /etc/httpd/sites-available
+      command: mkdir /etc/httpd/sites-enabled
+    - name: copy virtual host setup
+      template: src={{vhostTemplatePath}} dest=/etc/apache2/sites-available/
+
 #    - name: Activate virtual host
 #      command: a2ensite vhost
 #    - name: deactivate default vhost
