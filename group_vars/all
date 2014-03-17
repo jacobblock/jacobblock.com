@@ -1,0 +1,6 @@
+---
+# These are the Wordpress database settings
+wp_db_name: wordpress
+wp_db_user: wordpress
+wp_db_password: wordpress
+

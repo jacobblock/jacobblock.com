@@ -9,40 +9,40 @@
   user: vagrant
   sudo: yes
   
-  vars:
-    vhostTemplatePath: templates/vhost
-    mysqlTemplatePath: templates/mysql
-    
-  tasks:
-#    - name: update apt cache
-#      yum: update_cache=yes
-
-    - name: Install packages
-      yum: pkg={{item}} state=latest
-      with_items:
-        - unzip
-        - httpd
-        - mysql-server
-        - MySQL-python
+#  vars:
+#    vhostTemplatePath: templates/vhost
+#    mysqlTemplatePath: templates/mysql
+ 
+  roles:
+    - nginx
+    - php-fpm
+    - mysql
+    - wordpress
+       
+#  tasks:
+#    - name: Install packages
+#      yum: pkg={{item}} state=latest
+#      with_items:
+#        - unzip
 #        - python-mysqldb
-        - php
-        - php-mysql
-        - php-cli
-        - php-gd
+#        - php
+#        - php-mysql
+#        - php-cli
+#        - php-gd
 #        - php5-curl
 #        - php5-sqlite
 #        - php5-xmlrpc
 #        - php5-imagick
 #        - php5-xcache
 #        - libapache2-mod-php5
-    - name: Start httpd
-      service: name=httpd state=started
-    - name: Start mysqld
-      service: name=mysqld state=started
-    - name: Startup auto
-      command: chkconfig httpd on
-      command: chkconfig mysqld on
-
+#    - name: Start httpd
+#      service: name=httpd state=started
+#    - name: Start mysqld
+#      service: name=mysqld state=started
+#    - name: Startup auto
+#      command: chkconfig httpd on
+#      command: chkconfig mysqld on
+#
 #    - name: Setup MySQL root
 #      mysql_user: name=root password=vagrant host={{item}} state=present
 #      with_items:
@@ -71,22 +71,22 @@
 #      user: name=vagrant gorups=www-data append=yes
 #    - name: Make directory
 #      file: path=/var/www/wordpress state=directory owner=www-data group=www-data mode=0755
-
-    - name: Download WordPress
-      get_url: url=http://wordpress.org/latest.zip dest=/tmp/latest.zip
-    - name: Unzip WordPress
-      unarchive: copy=no src=/tmp/latest.zip dest=/tmp/
-    - name: Move wordpress
-      command: rsync -a /tmp/wordpress /var/www/html
-      command: rm -rf /tmp/latest.zip /tmp/wordpress
+#
+#    - name: Download WordPress
+#      get_url: url=http://wordpress.org/latest.zip dest=/tmp/latest.zip
+#    - name: Unzip WordPress
+#      unarchive: copy=no src=/tmp/latest.zip dest=/tmp/
+#    - name: Move wordpress
+#      command: rsync -a /tmp/wordpress /var/www/html
+#      command: rm -rf /tmp/latest.zip /tmp/wordpress
 #      command: mv -f /tmp/wordpress /var/www/html
 
-    - name: Setup virtual hosts
-      command: mkdir /etc/httpd/sites-available
-      command: mkdir /etc/httpd/sites-enabled
-    - name: copy virtual host setup
-      template: src={{vhostTemplatePath}} dest=/etc/apache2/sites-available/
-
+#    - name: Setup virtual hosts
+#      command: mkdir /etc/httpd/sites-available
+#      command: mkdir /etc/httpd/sites-enabled
+#    - name: copy virtual host setup
+#      template: src={{vhostTemplatePath}} dest=/etc/apache2/sites-available/
+#
 #    - name: Activate virtual host
 #      command: a2ensite vhost
 #    - name: deactivate default vhost
