@@ -8,6 +8,7 @@
 - hosts: all
   user: vagrant
   sudo: yes
+  gather_facts: yes
   
 #  vars:
 #    vhostTemplatePath: templates/vhost
