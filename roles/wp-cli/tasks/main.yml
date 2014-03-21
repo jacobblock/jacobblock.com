@@ -1,0 +1,8 @@
+---
+- name: Install wp-cpi
+  shell: curl -kL http://wp-cli.org/installer.sh | bash
+         executable=/bin/bash
+         creates=/root/.wp-cli/bin/wp
+
+- name: Symlink
+  shell: ln -s /root/.wp-cli/bin/wp /usr/bin/wp creates=/usr/bin/wp

@@ -18,6 +18,7 @@
     - nginx
     - php-fpm
     - mysql
+    - wp-cli
     - wordpress
        
 #  tasks:

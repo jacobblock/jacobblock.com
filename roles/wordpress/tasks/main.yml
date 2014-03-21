@@ -33,3 +33,6 @@
 
 #- name: Change ownership of Wordpress installation
 #  file: path=/srv/wordpress/ owner=wordpress group=wordpress state=directory recurse=yes
+
+- name: Symlink theme
+  command: ln -s /vagrant/blocktheme {{ wp_dir }}wordpress/wp-content/themes/blocktheme
